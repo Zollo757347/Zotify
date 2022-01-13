@@ -34,6 +34,16 @@ typedef struct _wavheader {
 FILE *openWAV(char fileName[]);
 
 /**
+  * Generates a .WAV file
+  *
+  * @param {FILE*} wav
+  * @param {double} bpm The bpm of the song
+  * @param {int} beatCount Beat count per bar
+  * @return {FILE*} The data size of the file
+**/
+int32_t makeWAV(FILE *wav, double bpm, int beatCount);
+
+/**
   * Adds one second of blank data at the end of the file, fills in the total data size to the header, and closes the file
   *
   * @param {FILE*} wav
