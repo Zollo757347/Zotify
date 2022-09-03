@@ -28,12 +28,11 @@ int readBar(char buf[][MAX_BUFFER_LENGTH + 1], int *melodyCount, int barNumber) 
   while (fgets(buf[*melodyCount], MAX_BUFFER_LENGTH, stdin) != NULL) {
     if (strstr(buf[*melodyCount], "-----") != NULL) return 0;
     else if (allSpace(buf[*melodyCount])) continue;
-    else {
-      int len = strlen(buf[*melodyCount]);
-      if (len < 1 || 511 < len) RangeError("melody length", 0, 511, len, barNumber);
-      if (10 < *melodyCount) RangeError("melody count", 0, 10, *melodyCount, barNumber);
-      (*melodyCount)++;
-    }
+
+    int len = strlen(buf[*melodyCount]);
+    if (len < 1 || 511 < len) RangeError("melody length", 0, 511, len, barNumber);
+    if (10 < *melodyCount) RangeError("melody count", 0, 10, *melodyCount, barNumber);
+    (*melodyCount)++;
   }
 
   return 1;

@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include <ctype.h>
 #include <math.h>
 #include "note.h"
@@ -41,6 +43,13 @@ int32_t writeBar(FILE *wav, double bpm, int beatCount, char melody[][MAX_BUFFER_
   return sizeof(int16_t) * sampleCount;
 }
 
+double wave(double freq, double t) {
+  double y = sin(1 * 2 * PI * freq / SAMPLERATE * t) * exp(-t / SAMPLERATE);
+  y += y*y*y;
+  y *= 1 - exp(-6 * t);
+  return y;
+}
+
 void writeNote(int16_t *sample, char notes[][5], int noteCount, int sampleCount) {
   int16_t queue[sampleCount];
   for (int i = 0; i < sampleCount; i++)
@@ -50,19 +59,12 @@ void writeNote(int16_t *sample, char notes[][5], int noteCount, int sampleCount)
     double freq = nameToFreq(notes[i]);
     if (freq != 0) {
       int32_t samplePerCycle = SAMPLERATE / freq;
-      double delta = 2 * PI / samplePerCycle;
 
       for (int j = 0; j + samplePerCycle < sampleCount;)
         for (int k = 0; k < samplePerCycle; j++, k++)
-          queue[j] += AMPLITUDE * pow(0.9, freq / C4) * sin(delta * k);
+          queue[j] += AMPLITUDE * wave(freq, j);
     }
   }
-
-  for (int i = 0; i < 5 * 100; i++)
-    queue[i] *= (i / (5.0 * 100));
-
-  for (int i = 0; i < 15 * 100; i++)
-    queue[sampleCount - 1 - i] *= (i / (15.0 * 100));
 
   for (int i = 0; i < sampleCount; i++)
     sample[i] += queue[i];
